@@ -17,7 +17,7 @@ int main(void)
 
     pwm_init(&led_pwm);
 
-    timer_init();          // Your millis() timer
+    timer_init();          // millis() timer
 
     uint32_t previous_time = 0;
 
