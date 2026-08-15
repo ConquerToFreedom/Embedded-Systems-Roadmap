@@ -12,6 +12,6 @@ int main(void)
 
     while (1)
     {
-        uart_write_string(&uart, "Hello from STM32!\r\n");
+        uart_write_string(&uart, "Hello STM32!, I AM CHETAN\r\n");
     }
 }

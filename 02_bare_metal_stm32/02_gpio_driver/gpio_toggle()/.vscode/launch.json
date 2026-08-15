@@ -1,0 +1,30 @@
+{
+    "version": "0.2.0",
+
+    "configurations": [
+        {
+            "name": "STM32F446RE Debug",
+            "type": "cortex-debug",
+            "request": "launch",
+
+            "cwd": "${workspaceFolder}",
+
+            "executable": "${workspaceFolder}/firmware/main.elf",
+
+            "servertype": "stlink",
+
+            "device": "STM32F446RE",
+            "interface": "swd",
+
+            "armToolchainPath": "C:/ArmToolchain/arm-gnu-toolchain-15.2.rel1-mingw-w64-i686-arm-none-eabi/bin",
+
+            "gdbPath": "C:/ArmToolchain/arm-gnu-toolchain-15.2.rel1-mingw-w64-i686-arm-none-eabi/bin/arm-none-eabi-gdb.exe",
+
+            "serverpath": "C:/ST/STM32CubeIDE_2.0.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.externaltools.stlink-gdb-server.win32_2.2.300.202509021040/tools/bin/ST-LINK_gdbserver.exe",
+
+            "runToEntryPoint": "main",
+
+            "showDevDebugOutput": "raw"
+        }
+    ]
+}
