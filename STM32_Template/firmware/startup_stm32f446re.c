@@ -14,6 +14,8 @@ void Reset_Handler(void);
 void Default_Handler(void);
 void EXTI15_10_IRQHandler(void)
     __attribute__((weak, alias("Default_Handler")));
+void TIM2_IRQHandler(void)
+    __attribute__((weak, alias("Default_Handler")));    
 /* Weak aliases for interrupts */
 void NMI_Handler(void)          __attribute__((weak, alias("Default_Handler")));
 void HardFault_Handler(void)    __attribute__((weak, alias("Default_Handler")));
@@ -77,6 +79,9 @@ const void *VectorTable[] =
 
     /* External Interrupts 0-39 */
     [16 ... 55] = Default_Handler,
+
+    /* IRQ28 = TIM2 */
+    [44] = TIM2_IRQHandler,
 
     /* IRQ40 = EXTI15_10 */
     [56] = EXTI15_10_IRQHandler,

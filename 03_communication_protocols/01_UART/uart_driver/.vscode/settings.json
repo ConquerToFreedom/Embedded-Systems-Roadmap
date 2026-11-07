@@ -1,9 +1,0 @@
-{
-    "files.associations": {
-        "*.h": "c"
-    },
-
-    "C_Cpp.default.configurationProvider": "ms-vscode.cpptools",
-
-    "editor.formatOnSave": true
-}

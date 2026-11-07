@@ -2,27 +2,38 @@
 # Project Configuration
 ###############################################################################
 
-CC = arm-none-eabi-gcc
+CC      = arm-none-eabi-gcc
 OBJCOPY = arm-none-eabi-objcopy
-SIZE = arm-none-eabi-size
+SIZE    = arm-none-eabi-size
 
-TARGET = main
+TARGET  = main
+MCU     = cortex-m4
 
-MCU = cortex-m4
+# Shared UART driver (relative to this Makefile)
+UART_DRIVER_DIR = ../../uart_driver
 
-CFLAGS = -mcpu=$(MCU) -mthumb -std=gnu11 -O0 -g3 -Wall -c
+# Include paths: "." for local stm32f446xx.h, driver dir for uart.h
+INCLUDES = -I. -I$(UART_DRIVER_DIR)
+
+CFLAGS  = -mcpu=$(MCU) -mthumb -std=gnu11 -O0 -g3 -Wall -Wextra \
+          $(INCLUDES) -MMD -MP
 LDFLAGS = -nostdlib -T stm32f446re.ld
 
 ###############################################################################
 # Source Files
 ###############################################################################
 
-SRCS = \
-main.c \
-uart.c \
-startup_stm32f446re.c
+LOCAL_SRCS  = main.c startup_stm32f446re.c
+SHARED_SRCS = $(UART_DRIVER_DIR)/uart.c
 
-OBJS = $(SRCS:.c=.o)
+SRCS = $(LOCAL_SRCS) $(SHARED_SRCS)
+
+# All .o files go into build/ so the shared uart_driver/ folder stays clean
+BUILD_DIR = build
+OBJS      = $(addprefix $(BUILD_DIR)/,$(notdir $(SRCS:.c=.o)))
+
+# Let make find .c files in the source directories
+vpath %.c $(sort $(dir $(SRCS)))
 
 ###############################################################################
 # Build
@@ -30,8 +41,11 @@ OBJS = $(SRCS:.c=.o)
 
 all: $(TARGET).elf $(TARGET).bin $(TARGET).hex
 
-%.o: %.c
-	$(CC) $(CFLAGS) -o $@ $<
+$(BUILD_DIR):
+	mkdir $(BUILD_DIR)
+
+$(BUILD_DIR)/%.o: %.c | $(BUILD_DIR)
+	$(CC) $(CFLAGS) -c -o $@ $<
 
 $(TARGET).elf: $(OBJS)
 	$(CC) $(LDFLAGS) -o $@ $^
@@ -44,23 +58,31 @@ $(TARGET).hex: $(TARGET).elf
 	$(OBJCOPY) -O ihex $< $@
 
 ###############################################################################
-# Flash (OpenOCD)
-###############################################################################
-
-flash:
-	openocd -f interface/stlink.cfg -f target/stm32f4x.cfg -c "program $(TARGET).elf verify reset exit"
-
-###############################################################################
 # Clean
 ###############################################################################
 
 clean:
-	del /Q *.o *.elf *.bin *.hex
-
-###############################################################################
-# Rebuild
-###############################################################################
+	-rm -rf $(BUILD_DIR)
+	-rm -f $(TARGET).elf $(TARGET).bin $(TARGET).hex
 
 rebuild: clean all
 
-.PHONY: all clean flash rebuild
+###############################################################################
+# Flash (STM32CubeProgrammer CLI)
+###############################################################################
+
+PROG_CLI = "C:/Program Files/STMicroelectronics/STM32Cube/STM32CubeProgrammer/bin/STM32_Programmer_CLI.exe"
+
+flash: $(TARGET).elf
+	$(PROG_CLI) -c port=SWD -w $(CURDIR)/$(TARGET).elf -v -rst
+
+flash-hard: $(TARGET).elf
+	$(PROG_CLI) -c port=SWD mode=UR reset=HWrst -w $(CURDIR)/$(TARGET).elf -v -hardRst
+
+###############################################################################
+# Auto-generated dependency files
+###############################################################################
+
+-include $(OBJS:.o=.d)
+
+.PHONY: all clean rebuild flash flash-hard

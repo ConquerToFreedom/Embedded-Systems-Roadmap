@@ -30,6 +30,12 @@
 #define RCC_BASE            (AHB1PERIPH_BASE + 0x3800UL)
 
 /******************************************************************
+ *                     TIMERS
+ ******************************************************************/
+
+#define TIM2_BASE           (APB1PERIPH_BASE + 0x0000UL)
+
+/******************************************************************
  *                     SYSCFG
  ******************************************************************/
 
@@ -50,6 +56,11 @@
 
 #define NVIC_ICER0          (*(volatile uint32_t*)0xE000E180)
 #define NVIC_ICER1          (*(volatile uint32_t*)0xE000E184)
+
+/******************************************************************
+ *                     UART
+ ******************************************************************/
+#define USART2_BASE    (APB1PERIPH_BASE + 0x4400UL)
 
 /******************************************************************
  *                     GPIO Registers
@@ -146,4 +157,139 @@ typedef struct
 
 #define EXTI       ((EXTI_TypeDef*) EXTI_BASE)
 
-#endif
+/******************************************************************
+ *                     TIM Registers
+ ******************************************************************/
+
+typedef struct
+{
+    volatile uint32_t CR1;
+    volatile uint32_t CR2;
+    volatile uint32_t SMCR;
+    volatile uint32_t DIER;
+    volatile uint32_t SR;
+    volatile uint32_t EGR;
+    volatile uint32_t CCMR1;
+    volatile uint32_t CCMR2;
+    volatile uint32_t CCER;
+    volatile uint32_t CNT;
+    volatile uint32_t PSC;
+    volatile uint32_t ARR;
+
+    volatile uint32_t RCR;      /* Repetition Counter Register */
+    volatile uint32_t CCR1;     /* Capture Compare Register 1 */
+    volatile uint32_t CCR2;     /* Capture Compare Register 2 */
+    volatile uint32_t CCR3;     /* Capture Compare Register 3 */
+    volatile uint32_t CCR4;     /* Capture Compare Register 4 */
+
+    volatile uint32_t BDTR;     /* Break and Dead-Time Register */
+    volatile uint32_t DCR;      /* DMA Control Register */
+    volatile uint32_t DMAR;     /* DMA Address Register */
+
+} TIM_TypeDef;
+
+#define TIM2       ((TIM_TypeDef *)TIM2_BASE)
+
+typedef struct
+{
+    volatile uint32_t SR;      // Status Register
+    volatile uint32_t DR;      // Data Register
+    volatile uint32_t BRR;     // Baud Rate Register
+    volatile uint32_t CR1;     // Control Register 1
+    volatile uint32_t CR2;     // Control Register 2
+    volatile uint32_t CR3;     // Control Register 3
+    volatile uint32_t GTPR;    // Guard Time and Prescaler Register
+
+} USART_TypeDef;
+
+#define USART2    ((USART_TypeDef *)USART2_BASE)
+
+/******************************************************************
+ *                     Bit Position Definitions
+ ******************************************************************/
+
+/*-------------------------------------------------
+ * RCC
+ *------------------------------------------------*/
+
+/* GPIO Clock Enable */
+#define RCC_AHB1ENR_GPIOAEN_Pos      0U
+#define RCC_AHB1ENR_GPIOBEN_Pos      1U
+#define RCC_AHB1ENR_GPIOCEN_Pos      2U
+#define RCC_AHB1ENR_GPIODEN_Pos      3U
+#define RCC_AHB1ENR_GPIOEEN_Pos      4U
+
+/* TIM2 Clock Enable */
+#define RCC_APB1ENR_TIM2EN_Pos       0U
+
+/*-------------------------------------------------
+ * TIM2 - CR1
+ *------------------------------------------------*/
+#define TIM_CR1_CEN_Pos              0U
+
+/*-------------------------------------------------
+ * TIM2 - DIER
+ *------------------------------------------------*/
+#define TIM_DIER_UIE_Pos             0U
+
+/*-------------------------------------------------
+ * TIM2 - SR
+ *------------------------------------------------*/
+#define TIM_SR_UIF_Pos               0U
+
+/*-------------------------------------------------
+ * TIM2 - EGR
+ *------------------------------------------------*/
+#define TIM_EGR_UG_Pos               0U
+
+/*-------------------------------------------------
+ * TIM2 - CCMR1
+ *------------------------------------------------*/
+#define TIM_CCMR1_CC1S_Pos           0U
+#define TIM_CCMR1_OC1FE_Pos          2U
+#define TIM_CCMR1_OC1PE_Pos          3U
+#define TIM_CCMR1_OC1M_Pos           4U
+
+/*-------------------------------------------------
+ * TIM2 - CCER
+ *------------------------------------------------*/
+#define TIM_CCER_CC1E_Pos            0U
+#define TIM_CCER_CC1P_Pos            1U
+
+/*-------------------------------------------------
+ * GPIO Pin Numbers
+ *------------------------------------------------*/
+#define GPIO_PIN_0                   0U
+#define GPIO_PIN_1                   1U
+#define GPIO_PIN_2                   2U
+#define GPIO_PIN_3                   3U
+#define GPIO_PIN_4                   4U
+#define GPIO_PIN_5                   5U
+#define GPIO_PIN_6                   6U
+#define GPIO_PIN_7                   7U
+#define GPIO_PIN_8                   8U
+#define GPIO_PIN_9                   9U
+#define GPIO_PIN_10                  10U
+#define GPIO_PIN_11                  11U
+#define GPIO_PIN_12                  12U
+#define GPIO_PIN_13                  13U
+#define GPIO_PIN_14                  14U
+#define GPIO_PIN_15                  15U
+
+/*-------------------------------------------------
+ * USART
+ *------------------------------------------------*/
+
+/* RCC - APB1 */
+#define RCC_APB1ENR_USART2EN_Pos    17U
+
+/* USART SR */
+#define USART_SR_TC_Pos             6U
+#define USART_SR_TXE_Pos            7U
+
+/* USART CR1 */
+#define USART_CR1_TE_Pos            3U
+#define USART_CR1_RE_Pos            2U
+#define USART_CR1_UE_Pos            13U
+
+#endif // STM32F446XX_H

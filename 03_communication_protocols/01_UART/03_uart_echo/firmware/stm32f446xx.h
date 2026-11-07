@@ -286,6 +286,7 @@ typedef struct
 /* USART SR */
 #define USART_SR_TC_Pos             6U
 #define USART_SR_TXE_Pos            7U
+#define USART_SR_RXNE_Pos           5U
 
 /* USART CR1 */
 #define USART_CR1_TE_Pos            3U

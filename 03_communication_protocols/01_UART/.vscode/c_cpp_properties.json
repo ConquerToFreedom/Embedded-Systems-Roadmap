@@ -1,0 +1,22 @@
+{
+    "configurations": [
+        {
+            "name": "STM32",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "${workspaceFolder}/01_uart_polling_tx/firmware",
+                "${workspaceFolder}/02_uart_polling_rx/firmware",
+                "${workspaceFolder}/uart_driver"
+            ],
+            "defines": [],
+            "compilerPath": "C:/ArmToolchain/arm-gnu-toolchain-15.2.rel1-mingw-w64-i686-arm-none-eabi/bin/arm-none-eabi-gcc.exe",
+            "cStandard": "gnu11",
+            "intelliSenseMode": "gcc-arm",
+            "compilerArgs": [
+                "-mcpu=cortex-m4",
+                "-mthumb"
+            ]
+        }
+    ],
+    "version": 4
+}

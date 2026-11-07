@@ -284,6 +284,7 @@ typedef struct
 #define RCC_APB1ENR_USART2EN_Pos    17U
 
 /* USART SR */
+#define USART_SR_RXNE_Pos           5U
 #define USART_SR_TC_Pos             6U
 #define USART_SR_TXE_Pos            7U
 
