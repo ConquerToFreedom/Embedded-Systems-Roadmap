@@ -74,15 +74,8 @@ rebuild: clean all
 PROG_CLI = "C:/Program Files/STMicroelectronics/STM32Cube/STM32CubeProgrammer/bin/STM32_Programmer_CLI.exe"
 
 flash: $(TARGET).elf
-	$(PROG_CLI) -c port=SWD -w $(CURDIR)/$(TARGET).elf -v -rst
-
-flash-hard: $(TARGET).elf
-	$(PROG_CLI) -c port=SWD mode=UR reset=HWrst -w $(CURDIR)/$(TARGET).elf -v -hardRst
-
-###############################################################################
-# Auto-generated dependency files
-###############################################################################
-
--include $(OBJS:.o=.d)
+	st-flash write $(TARGET).bin 0x08000000
+erase: 
+	st-flash erase
 
 .PHONY: all clean rebuild flash flash-hard
