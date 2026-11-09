@@ -78,7 +78,17 @@ void uart_read_line(UART_Handle_t *handle, char *buffer, uint32_t max_len)
     while (1) 
     {
         c = uart_read_char(handle);
-
+        
+        if (c == '\b' || c == 0x7F) 
+        {
+           if (index > 0) 
+           {
+              index--;
+              uart_write_string(handle, "\b \b");
+           }
+           continue;
+        }
+        
         if (c == '\r' || c == '\n') 
         {
             buffer[index] = '\0';
@@ -92,5 +102,6 @@ void uart_read_line(UART_Handle_t *handle, char *buffer, uint32_t max_len)
             index++;
             uart_write_char(handle, c);
         }
+
     }
 }
