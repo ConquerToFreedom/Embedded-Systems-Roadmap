@@ -1,7 +1,9 @@
 #include "uart.h"
 
-volatile char rx_data = 0;
-volatile uint8_t rx_flag = 0;
+volatile uint8_t rx_buffer[RX_BUFFER_SIZE];
+volatile uint32_t head = 0;
+volatile uint32_t tail = 0;
+
 void uart_init_interrupt(UART_Handle_t *handle)
 {
     /* 1. Enable GPIOA clock */
@@ -113,13 +115,43 @@ void uart_read_line(UART_Handle_t *handle, char *buffer, uint32_t max_len)
 
     }
 }
-    void USART2_IRQHandler(void)
-  {
-    // Check if RXNE flag is set
-    if (USART2->SR & (1U << 5)) 
+   void USART2_IRQHandler(void)
+{
+    if (USART2->SR & (1U << USART_SR_RXNE_Pos)) 
     {
-        // Read DR to clear the flag and save the data
-         rx_data = USART2->DR;
-         rx_flag = 1; // Tell main() that new data arrived
+        // Read the data (this also clears the RXNE flag)
+        uint8_t data = USART2->DR;
+
+        // Calculate the next head position
+        uint32_t next_head = head + 1;
+        if (next_head >= RX_BUFFER_SIZE) {
+            next_head = 0; // Wrap around to the start
+        }
+
+        // Check if the buffer is full (next_head == tail)
+        if (next_head != tail) 
+        {
+            rx_buffer[head] = data; // Save the data
+            head = next_head;       // Move the head
+        }
+        // Else: buffer is full. We drop the new data.
     }
-  }
+}
+char uart_get_char(void)
+{
+    // If head == tail, the buffer is empty
+    if (head == tail) {
+        return 0; // 0 means "no data available"
+    }
+
+    // Read the data
+    char data = rx_buffer[tail];
+    
+    // Move the tail forward
+    tail++;
+    if (tail >= RX_BUFFER_SIZE) {
+        tail = 0; // Wrap around
+    }
+
+    return data;
+}
