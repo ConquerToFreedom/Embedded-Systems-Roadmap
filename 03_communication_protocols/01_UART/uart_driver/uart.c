@@ -1,6 +1,8 @@
 #include "uart.h"
 
-void uart_init(UART_Handle_t *handle)
+volatile char rx_data = 0;
+volatile uint8_t rx_flag = 0;
+void uart_init_interrupt(UART_Handle_t *handle)
 {
     /* 1. Enable GPIOA clock */
     RCC->AHB1ENR |= (1U << RCC_AHB1ENR_GPIOAEN_Pos);
@@ -31,6 +33,12 @@ void uart_init(UART_Handle_t *handle)
     handle->USARTx->CR1 |= (1U << USART_CR1_TE_Pos);
     handle->USARTx->CR1 |= (1U << USART_CR1_RE_Pos);
 
+    // Enable the RX interrupt in the USART
+    handle->USARTx->CR1 |= (1U << USART_CR1_RXNEIE_Pos);
+    
+    // Enable the USART2 interrupt in the NVIC
+    NVIC_ISER1 |= (1U << 6);
+    
     /* 7. Enable USART */
     handle->USARTx->CR1 |= (1U << USART_CR1_UE_Pos);
 }
@@ -105,3 +113,13 @@ void uart_read_line(UART_Handle_t *handle, char *buffer, uint32_t max_len)
 
     }
 }
+    void USART2_IRQHandler(void)
+  {
+    // Check if RXNE flag is set
+    if (USART2->SR & (1U << 5)) 
+    {
+        // Read DR to clear the flag and save the data
+         rx_data = USART2->DR;
+         rx_flag = 1; // Tell main() that new data arrived
+    }
+  }

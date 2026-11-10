@@ -10,9 +10,12 @@ typedef struct
 
 } UART_Handle_t;
 
+// Tell the compiler this variable can change unexpectedly
+extern volatile char rx_data; 
+extern volatile uint8_t rx_flag;
 
 /* UART Initialization */
-void uart_init(UART_Handle_t *handle);
+void uart_init_interrupt(UART_Handle_t *handle);
 
 
 /* UART Polling TX */
